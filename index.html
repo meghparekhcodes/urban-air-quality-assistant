@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Urban Air Quality Assistant</title>
+<style>
+:root{color-scheme:dark;--bg:#070b12;--card:#0e1623;--line:#1d2a3d;--tx:#e6edf6;--mu:#8da0b8;--ac:#3de0c2;--ac2:#6aa8ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 600px at 15% -10%,#10223a 0,transparent 60%),var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:clamp(22px,4vw,32px);margin:0 0 4px;letter-spacing:.2px}h1 span{color:var(--ac)}
+.sub{color:var(--mu);margin:0 0 18px}
+.card{background:linear-gradient(180deg,#0f1827,var(--card));border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--ac2);margin:0 0 12px}
+label{display:block;font-size:13px;color:var(--mu);margin:0 0 4px}
+input[type=text],select,textarea{width:100%;background:#0a111c;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.chk{display:flex;flex-wrap:wrap;gap:8px}.chk label{display:flex;gap:6px;align-items:center;margin:0;color:var(--tx);background:#0a111c;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+button{background:var(--ac);color:#04251f;border:0;border-radius:10px;padding:10px 18px;font:600 15px inherit;cursor:pointer}
+button.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}button:disabled{opacity:.5}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;border-radius:6px;padding:2px 8px;border:1px solid}
+.t-m{color:#3de06a;border-color:#3de06a}.t-f{color:#6aa8ff;border-color:#6aa8ff}.t-g{color:#ffd24a;border-color:#ffd24a}.t-d{color:#ff9a3c;border-color:#ff9a3c;background:#ff9a3c14}
+.banner{border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.banner.demo{background:#ff9a3c14;border:1px solid #ff9a3c80;color:#ffd0a0}.banner.err{background:#ff5a4f14;border:1px solid #ff5a4f80;color:#ffb3ad}
+.hero{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;text-align:center;flex:none}
+.ring b{font-size:44px;line-height:1;display:block}.ring small{color:var(--mu)}
+.pols{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));margin-top:14px}
+.pol{background:#0a111c;border:1px solid var(--line);border-radius:12px;padding:10px}.pol b{font-size:18px}.pol span{display:block;color:var(--mu);font-size:12px}
+.bars{display:flex;gap:3px;align-items:flex-end;height:64px;margin-top:8px}.bars i{flex:1;border-radius:3px 3px 0 0;min-width:4px}
+.cols{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+ul.rec{list-style:none;padding:0;margin:0}ul.rec li{padding:10px 0;border-top:1px solid var(--line)}ul.rec li:first-child{border-top:0}
+details summary{cursor:pointer;color:var(--ac);font-size:13px;margin-top:4px}details p{margin:6px 0 0;color:var(--mu);font-size:14px}
+.chat{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow-y:auto;margin-bottom:12px}
+.msg{padding:10px 14px;border-radius:14px;max-width:88%;white-space:pre-wrap}.u{align-self:flex-end;background:#16335a}.a{align-self:flex-start;background:#0a111c;border:1px solid var(--line)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.chips button{font-size:13px;padding:6px 12px}
+.foot{color:var(--mu);font-size:12.5px;margin-top:20px}
+.spin{width:18px;height:18px;border:3px solid var(--line);border-top-color:var(--ac);border-radius:50%;animation:s 1s linear infinite;display:inline-block;vertical-align:middle}@keyframes s{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style></head><body><div class="wrap">
+<h1>Urban Air <span>Quality</span> Assistant</h1>
+<p class="sub">Low-emission routines, cleaner indoor air and practical alternatives, matched to your city and lifestyle.</p>
+
+<form class="card" id="f" novalidate>
+ <h2>Your situation</h2>
+ <div class="grid">
+  <div><label for="city">City *</label><input type="text" id="city" placeholder="e.g. Delhi, Vadodara, Lahore" autocomplete="off"></div>
+  <div><label for="commute">Main commute</label><select id="commute"><option value="car">Private car</option><option value="bike">Motorbike / scooter</option><option value="transit">Public transit</option><option value="active">Walk / cycle</option><option value="wfh">Work or study from home</option></select></div>
+  <div><label for="cook">Cooking fuel</label><select id="cook"><option value="gas">Gas / LPG</option><option value="induction">Electric / induction</option><option value="biomass">Wood / biomass</option></select></div>
+  <div><label for="prio">Top priority</label><select id="prio"><option value="health">Protect health</option><option value="cost">Save money</option><option value="emit">Cut my emissions</option></select></div>
+ </div>
+ <label style="margin-top:14px">Household (optional)</label>
+ <div class="chk">
+  <label><input type="checkbox" value="kids"> Children</label>
+  <label><input type="checkbox" value="elder"> Older adults</label>
+  <label><input type="checkbox" value="resp"> Asthma / lung / heart sensitivity</label>
+  <label><input type="checkbox" value="preg"> Pregnancy</label>
+ </div>
+ <label for="notes" style="margin-top:14px">Anything else? (optional)</label>
+ <textarea id="notes" rows="2" placeholder="e.g. I jog every morning, we have a small balcony, 30 km commute"></textarea>
+ <div class="row"><button type="submit" id="go">Get my air plan</button><button type="button" class="ghost" id="demo">Try demo data</button><span id="st" role="status" aria-live="polite"></span></div>
+</form>
+
+<div id="out"><div class="card" style="color:var(--mu)">Enter a city to see its air-quality snapshot and a personalised plan. No key is needed for live data (Open-Meteo); use <b>Try demo data</b> to explore offline.</div></div>
+
+<div class="foot">Air-quality readings are model-based estimates, not a substitute for local public-health alerts. Guidance here is general and non-diagnostic; if you have symptoms or a medical condition, follow local health advice or consult a qualified professional. Impact notes are directional estimates, not guaranteed reductions in exposure or emissions.</div>
+</div>
+<script>
+const CONFIG={llmEndpoint:""}; // optional: POST {question,context} -> {reply}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const BANDS=[[50,'Good','#3de06a'],[100,'Moderate','#ffd24a'],[150,'Unhealthy for sensitive groups','#ff9a3c'],[200,'Unhealthy','#ff5a4f'],[300,'Very unhealthy','#b86bff'],[9999,'Hazardous','#ff3d8b']];
+const band=a=>BANDS.find(b=>a<=b[0]);
+const lvlOf=a=>a<=50?0:a<=100?1:a<=150?2:a<=200?3:4;
+const DEMO_H=[212,205,198,190,182,170,160,150,138,128,122,120,126,140,160,185,205,220,230,226,218,214,210,208];
+const DEMO={city:'Sample city',demo:true,aqi:212,pm2_5:118,pm10:176,nitrogen_dioxide:64,ozone:18,sulphur_dioxide:21,carbon_monoxide:900,time:'',hourly:DEMO_H.map((v,i)=>({h:(new Date().getHours()+i)%24,v}))};
+let S={data:null,p:null,chat:[]};
+
+async function getJSON(u){const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
+async function getLive(city){
+ const g=await getJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`);
+ if(!g.results||!g.results.length)throw new Error('NOCITY');
+ const p=g.results[0];
+ const a=await getJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${p.latitude}&longitude=${p.longitude}&current=us_aqi,pm2_5,pm10,nitrogen_dioxide,ozone,sulphur_dioxide,carbon_monoxide&hourly=us_aqi&forecast_days=2&timezone=auto`);
+ const c=a.current;if(!c||c.us_aqi==null)throw new Error('NODATA');
+ const t=a.hourly.time,i=Math.max(0,t.findIndex(x=>x>=c.time.slice(0,13)+':00'));
+ const hourly=t.slice(i,i+24).map((x,k)=>({h:+x.slice(11,13),v:a.hourly.us_aqi[i+k]})).filter(x=>x.v!=null);
+ return {city:[p.name,p.admin1,p.country].filter(Boolean).join(', '),demo:false,aqi:Math.round(c.us_aqi),pm2_5:c.pm2_5,pm10:c.pm10,nitrogen_dioxide:c.nitrogen_dioxide,ozone:c.ozone,sulphur_dioxide:c.sulphur_dioxide,carbon_monoxide:c.carbon_monoxide,time:c.time.replace('T',' ')+' (local time at city)',hourly};
+}
+function profile(){
+ const hh=[...document.querySelectorAll('.chk input:checked')].map(x=>x.value);
+ return {hh,commute:$('#commute').value,cook:$('#cook').value,prio:$('#prio').value,notes:$('#notes').value.trim(),
+  sens:hh.some(x=>['kids','elder','resp','preg'].includes(x))};
+}
+function best(d){const h=d.hourly||[];return h.length?h.reduce((m,x)=>x.v<m.v?x:m,h[0]):null}
+const hh=h=>String(h).padStart(2,'0')+':00';
+
+function health(d,p){
+ const L=lvlOf(d.aqi),s=p.sens&&L>0;
+ const T=[
+  'Air quality is satisfactory. Normal outdoor activity is generally fine.',
+  'Acceptable for most people. Unusually sensitive people may notice symptoms during long, hard outdoor exertion.',
+  'Sensitive groups (children, older adults, people with lung or heart conditions) should reduce prolonged or heavy outdoor exertion.',
+  'Everyone may be affected. Reduce prolonged outdoor exertion; sensitive groups should stay indoors where possible.',
+  'Health alert level. Avoid outdoor exertion and limit time outside, especially for sensitive groups.'];
+ return T[L]+(s&&L<2?' Because your household includes a sensitive group, consider shorter outdoor sessions.':'')+' Follow local public-health advice, and seek medical advice if you have symptoms such as persistent cough, wheeze, chest tightness or breathlessness.';
+}
+
+function plan(d,p){
+ const L=lvlOf(d.aqi),E=Math.min(4,L+(p.sens&&L>0?1:0)),b=best(d),R=[];
+ const bw=b?`${hh(b.h)} (forecast AQI about ${Math.round(b.v)})`:'';
+ const commute={
+  transit:['Public transit is a good choice today.','Shared vehicles generally mean fewer emissions per passenger than solo driving.'].concat(E>=3?['At crowded stops, a well-fitted N95/FFP2-type respirator can reduce particle inhalation.']:[]),
+  car:['Keep windows up and set the vent to recirculate in heavy traffic. Consider carpooling or a transit leg for part of the trip.','Recirculating reduces what enters the cabin from nearby exhaust; sharing a ride can cut the number of vehicles on the road. Effects vary by route and vehicle.'],
+  bike:E>=3?['Open two-wheeler riding means direct exposure. Today, consider transit or a closed vehicle; if you must ride, wear a well-fitted respirator and avoid peak traffic.','Riders are close to exhaust and have no filtered cabin air.']:['Prefer less busy roads and avoid the peak-traffic hours if you can.','Traffic-dense roads usually have higher local pollution than side streets.'],
+  active:E>=3?['Switch to transit or a ride today, or shorten the trip; avoid busy roads.','Walking or cycling raises your breathing rate, so you inhale more air, and pollution levels are high.']:E==2?['Keep the trip short and use quieter streets.','Exertion increases how much air you breathe in.']:['Walking or cycling is a good low-emission option today. Choose parks or quieter streets.','Active travel produces no tailpipe emissions.'],
+  wfh:['Working or studying from home avoids commute exposure today.','It also removes the trip emissions, though home air quality still matters (see Indoor air).']}[p.commute];
+ R.push(['Commute',commute[0],commute[1]+(commute[2]?' '+commute[2]:'')]);
+ const out=[
+  'Good day for outdoor activity.','Fine for most people. If you are in a sensitive group, keep it moderate.',
+  'Choose lighter, shorter activity and avoid busy roads; sensitive groups should keep it indoors.',
+  'Move exercise indoors today. Keep outdoor time short and low-effort.',
+  'Do not exercise outdoors. Stay indoors and keep children, older adults and anyone with respiratory or heart conditions inside as much as possible.'][E];
+ R.push(['Outdoor activity',out,'The harder you exercise, the more polluted air you take in, so thresholds are stricter for exertion than for rest.'+(E<=1&&b?` If you can choose, the model forecast suggests ${bw} is the cleanest hour.`:'')]);
+ R.push(['Home ventilation',L>=3?`Keep windows mostly closed. ${b&&b.v<=150?`If you need fresh air, open briefly (5-10 min) around ${bw}.`:'Even the cleanest forecast hour is high, so rely on filtration instead of opening windows.'} Close up again before traffic peaks.`:`Open windows for cross-ventilation${b?` around ${bw}`:''}, ideally away from busy roads and rush hours.`,'Opening windows when outdoor air is cleaner dilutes indoor pollutants; when outdoor air is poor it lets particles in. Timing here is based on a model forecast and may change.']);
+ const ck={gas:'Use the range hood or an exhaust fan vented outside while cooking, and avoid high-heat frying and char-grilling on smoggy days.',induction:'Electric or induction cooking produces no combustion emissions indoors; still use the exhaust fan when frying.',biomass:'Wood or biomass burning is a major indoor particle source. Cook outdoors or in a well-vented space, and consider LPG or induction if available and affordable.'}[p.cook];
+ R.push(['Cooking',ck,'Cooking can raise indoor fine particles and NO2 considerably, and venting captures some of it near the source. Results depend on your kitchen and equipment.']);
+ R.push(['Errands',(E>=3?'Postpone non-essential trips. For essentials, bundle them into one outing and wear a well-fitted respirator.':'Bundle errands into one loop and avoid peak-traffic hours.')+(b&&E<3?` The forecast-cleanest hour is around ${hh(b.h)}.`:''),'Fewer, combined trips reduce time in traffic and total vehicle emissions. Delivery bundling can help similarly if it replaces several separate trips.']);
+ const ind=[
+  ['Run a HEPA purifier in the room you use most (bedroom or living room), doors closed.','HEPA filters capture fine particles. Choose a unit whose clean-air delivery rate suits your room size and replace filters on schedule. Benefits depend on fit, leaks and usage.'],
+  ['Avoid indoor sources: smoking, incense, candles, mosquito coils, aerosol sprays and coal or wood heaters.','These add particles and gases directly to the air you breathe indoors.'],
+  ['Wet-mop or use a HEPA vacuum rather than dry sweeping; seal door and window gaps with weatherstripping.','Wet cleaning avoids re-suspending dust; sealing gaps can reduce infiltration of outdoor smog.'],
+  ['Skip ozone-generating "air cleaners". Houseplants alone will not noticeably clean a home.','Ozone is itself a lung irritant, and plant effects at home scale are small.']];
+ const sus=[
+  ['Carpool or take transit on at least some days','Sharing trips can lower emissions per person; savings depend on occupancy and distance.'],
+  ['Chain trips and avoid idling (switch off at long stops)','Idling burns fuel with no distance gained, so cutting it trims emissions.'],
+  [E<=2?'Walk or cycle short trips (under about 2-3 km) via low-traffic routes':'Save walking or cycling for cleaner-air days; use transit meanwhile','Active travel has no tailpipe emissions, but exertion increases inhaled dose when air is poor.'],
+  ['Do not burn waste, leaves or biomass; keep your vehicle serviced','Open burning and poorly tuned engines are common local particle sources.']];
+ if(p.prio==='cost')sus.unshift(['Transit and carpooling typically cost less than driving alone','Fuel, parking and wear are shared or avoided; actual savings depend on your route.']);
+ if(p.prio==='emit')sus.unshift(['Track your biggest trips first: one fewer solo drive per week is a simple start','Large, frequent trips usually account for most of a household travel emissions.']);
+ return {R,ind,sus,b};
+}
+
+function render(d,p,msg){
+ const L=lvlOf(d.aqi),B=band(d.aqi),pl=plan(d,p),mx=Math.max(...d.hourly.map(x=>x.v),1);
+ const pol=[['PM2.5',d.pm2_5,'µg/m³'],['PM10',d.pm10,'µg/m³'],['NO₂',d.nitrogen_dioxide,'µg/m³'],['O₃',d.ozone,'µg/m³'],['SO₂',d.sulphur_dioxide,'µg/m³'],['CO',d.carbon_monoxide,'µg/m³']];
+ const li=a=>a.map(x=>`<li>${esc(x[0])}<details><summary>Why this?</summary><p>${esc(x[1])}</p></details></li>`).join('');
+ $('#out').innerHTML=`
+ ${msg?`<div class="banner err">${esc(msg)}</div>`:''}
+ ${d.demo?'<div class="banner demo"><b>Demo mode:</b> these are fabricated sample values, not real readings for any place. Use a city name with internet access for live data.</div>':''}
+ <div class="card"><h2>Air-quality snapshot · ${esc(d.city)}</h2>
+  <div class="hero"><div class="ring" style="border:8px solid ${B[2]};box-shadow:0 0 40px ${B[2]}33"><div><b>${d.aqi}</b><small>US AQI</small></div></div>
+  <div style="flex:1;min-width:240px"><span class="tag ${d.demo?'t-d':'t-m'}">${d.demo?'Sample data':'Modelled reading'}</span>
+   <h3 style="margin:8px 0 4px;color:${B[2]}">${B[1]}</h3><div>${esc(health(d,p))}</div>
+   <div style="color:var(--mu);font-size:12.5px;margin-top:8px">${d.demo?'Source: built-in sample. Not live.':`Source: Open-Meteo Air Quality API (CAMS model estimate, not a ground-station reading) · Last updated: ${esc(d.time)}`}</div></div></div>
+  <div class="pols">${pol.map(x=>`<div class="pol"><b>${x[1]==null?'n/a':Math.round(x[1])}</b><span>${x[0]} · ${x[2]}</span></div>`).join('')}</div>
+  <div style="margin-top:16px"><span class="tag t-f">${d.demo?'Sample forecast':'Model forecast'}</span> <span style="color:var(--mu);font-size:13px">next ${d.hourly.length} hours (AQI)${pl.b?` · lowest around ${hh(pl.b.h)}`:''}</span>
+   <div class="bars">${d.hourly.map(x=>`<i title="${hh(x.h)}: AQI ${Math.round(x.v)}" style="height:${Math.max(6,x.v/mx*100)}%;background:${band(x.v)[2]}"></i>`).join('')}</div></div>
+ </div>
+ <div class="cols">
+  <div class="card"><h2>Your daily plan <span class="tag t-g">Guidance</span></h2><ul class="rec">${pl.R.map(r=>`<li><b>${r[0]}</b><br>${esc(r[1])}<details><summary>Why this?</summary><p>${esc(r[2])}</p></details></li>`).join('')}</ul></div>
+  <div><div class="card"><h2>Indoor air <span class="tag t-g">Guidance</span></h2><ul class="rec">${li(pl.ind)}</ul></div>
+  <div class="card"><h2>Sustainable alternatives <span class="tag t-g">Guidance</span></h2><ul class="rec">${li(pl.sus)}</ul></div></div>
+ </div>
+ <div class="card"><h2>Ask the assistant <span class="tag t-g">Generated guidance</span></h2>
+  <div class="chips">${['Can I go for a run?','Should I wear a mask?','When should I open windows?','Do I need an air purifier?','Is it safe for my kids?'].map(q=>`<button type="button" class="ghost" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>
+  <div class="chat" id="chat" aria-live="polite"></div>
+  <form id="cf" class="row" style="margin-top:0"><input type="text" id="cq" placeholder="Ask about your commute, cooking, kids, purifiers…" style="flex:1;min-width:200px" aria-label="Your question"><button type="submit">Send</button></form></div>`;
+ S.chat=[];say('a',`Hi! I can answer using the ${d.demo?'sample':'current modelled'} AQI of ${d.aqi} (${B[1]}) for ${d.city}${p.hh.length?' and your household details':''}. What would you like to know?`);
+ document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>ask(b.dataset.q));
+ $('#cf').onsubmit=e=>{e.preventDefault();const v=$('#cq').value.trim();if(v){$('#cq').value='';ask(v)}};
+}
+function say(who,t){S.chat.push([who,t]);const c=$('#chat');c.insertAdjacentHTML('beforeend',`<div class="msg ${who}">${esc(t)}</div>`);c.scrollTop=c.scrollHeight}
+
+function reply(q){
+ const d=S.data,p=S.p,L=lvlOf(d.aqi),E=Math.min(4,L+(p.sens&&L>0?1:0)),b=best(d),has=k=>p.hh.includes(k),w=s=>new RegExp(s,'i').test(q);
+ const bw=b?` The model forecast shows the lowest AQI around ${hh(b.h)} (about ${Math.round(b.v)}); forecasts can change.`:'';
+ if(w('symptom|cough|wheez|breath|chest|dizzy|pain'))return 'I cannot assess symptoms. If you have trouble breathing, chest pain or symptoms that worry you, contact a medical professional or local emergency services. Meanwhile, staying indoors with the cleanest air available is generally advised.';
+ if(w('run|jog|exercis|gym|walk|cycl|sport|outdoor'))return E>=4?`With AQI ${d.aqi}, I would not recommend outdoor exercise. Move it indoors, keep intensity low, and avoid exertion near traffic.`:E==3?`AQI ${d.aqi} is high${p.sens?' and your household includes a sensitive group':''}. Better to exercise indoors today, or keep any outdoor activity short and light.`:E==2?`AQI ${d.aqi}: light, shorter activity away from busy roads is reasonable for most healthy adults; sensitive groups should keep it indoors or very short.${bw}`:`AQI ${d.aqi} is acceptable for most people. Moderate activity outdoors is generally fine; stop and rest if you feel unwell.${bw}`;
+ if(w('mask|respirator|n95|ffp'))return L<=1?'At this level most people do not need a mask. Sensitive people may choose one for long outdoor exposure.':'A well-fitted N95/FFP2-type respirator can reduce inhaled fine particles, but only if it seals well; cloth or surgical masks filter much less. It is not a substitute for limiting time outside, and may be uncomfortable for people with heart or lung conditions, who should ask a clinician.';
+ if(w('window|ventilat|fresh air|open'))return L>=3?`Outdoor air is poor, so keep windows mostly closed and use filtration.${b&&b.v<=150?bw+' If you need to ventilate, open briefly (5-10 minutes) then.':' Even the best forecast hour looks high.'}`:`Cross-ventilate for 10-15 minutes at a cleaner hour, away from rush hour.${bw}`;
+ if(w('purifier|filter|hepa|indoor'))return 'A HEPA purifier sized for your room, run with doors and windows closed, is one of the better-supported ways to reduce indoor fine particles. Put it where you spend the most time (often the bedroom), replace filters on schedule, and avoid ozone-generating devices. Results depend on room size, leaks and usage.';
+ if(w('cook|kitchen|stove|fry'))return {gas:'Use the exhaust fan or hood vented outside, and go easy on high-heat frying on smoggy days.',induction:'Induction or electric cooking avoids combustion emissions indoors; still vent when frying.',biomass:'Biomass burning is a major indoor particle source. Cook in a well-ventilated space and consider LPG or induction when possible.'}[p.cook];
+ if(w('kid|child|school|baby|elder|parent|grand|pregnan'))return (has('kids')||has('elder')||has('preg')||/kid|child|school/i.test(q)?'Children, older adults and pregnant people are more sensitive to air pollution. ':'')+(L>=3?`With AQI ${d.aqi}, limit outdoor play and school-yard exertion, and prefer indoor activities. Check any local school or health-department advisories.`:L==2?'Keep outdoor play shorter and calmer, and watch for coughing or breathlessness.':'Normal activity is generally fine; stay alert to changes in air quality.');
+ if(w('car|drive|commut|transit|bus|metro|bike|carpool|travel|work'))return `For your commute (${{car:'private car',bike:'two-wheeler',transit:'public transit',active:'walk or cycle',wfh:'from home'}[p.commute]}): `+(p.commute==='wfh'?'staying home avoids trip exposure and emissions.':p.commute==='transit'?'transit is a solid choice. At crowded stops a respirator can help on high-AQI days.':p.commute==='car'?'keep windows up on recirculate, and try carpooling or a transit leg to reduce emissions.':p.commute==='bike'?E>=3?'consider a closed vehicle or transit today.':'use quieter roads and avoid rush hour.':E>=3?'choose transit today; save walking or cycling for cleaner days.':'walking or cycling is fine; choose quiet routes.');
+ if(w('why|how much|help|reduce|impact'))return 'Each recommendation has a "Why this?" note. The air-quality values are modelled readings; the impact of actions (e.g. carpooling, purifiers) is only a directional estimate, because real results depend on your home, route and local conditions. I cannot promise a specific reduction.';
+ return `I can help with outdoor activity, masks, ventilation, purifiers, cooking, children and older adults, and commuting. Right now the AQI is ${d.aqi} (${band(d.aqi)[1]}). Try one of those topics.`;
+}
+async function ask(q){
+ say('u',q);
+ if(CONFIG.llmEndpoint){try{
+  const r=await fetch(CONFIG.llmEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,context:{aqi:S.data.aqi,city:S.data.city,demo:S.data.demo,profile:S.p}})});
+  if(!r.ok)throw 0;const j=await r.json();return say('a',j.reply||reply(q))}catch(e){}}
+ say('a',reply(q));
+}
+
+async function run(useDemo){
+ const city=$('#city').value.trim(),st=$('#st');
+ if(!useDemo&&!city){$('#city').focus();$('#out').innerHTML='<div class="banner err">Please enter a city name.</div>';return}
+ S.p=profile();$('#go').disabled=true;st.innerHTML='<span class="spin"></span> Loading…';
+ try{
+  if(useDemo){S.data=DEMO;render(DEMO,S.p)}
+  else{S.data=await getLive(city);render(S.data,S.p)}
+ }catch(e){
+  const m=e.message==='NOCITY'?`We could not find a city called "${city}". Check the spelling or try a larger nearby city.`:null;
+  if(m)$('#out').innerHTML=`<div class="banner err">${esc(m)}</div>`;
+  else{S.data=DEMO;render(DEMO,S.p,'Live air-quality data could not be loaded (network or service issue), so sample demo data is shown instead.')}
+ }
+ $('#go').disabled=false;st.textContent='';
+}
+$('#f').onsubmit=e=>{e.preventDefault();run(false)};
+$('#demo').onclick=()=>run(true);
+</script></body></html>
